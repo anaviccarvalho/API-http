@@ -18,6 +18,10 @@ const server = http.createServer((requisicao, resposta) => {
         resposta.end(JSON.stringify(tarefas))
     } else if (requisicao.method == 'GET' && urlobj.pathname == '/tarefas/busca') {
         const titulo = urlobj.searchParams.get('titulo');
+
+        const resultadoFiltrado = tarefas.filter((titulo)=>{
+            
+        })
     }
     else if (requisicao.method == 'POST' && requisicao.url == '/tarefa') {
         let body = ''
