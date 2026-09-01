@@ -1,5 +1,6 @@
 import { error } from 'node:console';
-import http from 'node:http'
+import http from 'node:http';
+import { URL } from 'node:url';
 
 const porta = 3000
 
@@ -19,11 +20,13 @@ const server = http.createServer((requisicao, resposta) => {
     } else if (requisicao.method == 'GET' && urlobj.pathname == '/tarefas/busca') {
         const titulo = urlobj.searchParams.get('titulo');
 
-        const resultadoFiltrado = tarefas.filter((titulo)=>{
-            
+        const resultadoFiltrado = tarefas.filter((tarefa) => {
+            return tarefa.toLowerCase().includes(titulo || '').toLowerCase()
         })
+        resposta.statusCode == 200;
+        resposta.end(JSON.stringify)
     }
-    else if (requisicao.method == 'POST' && requisicao.url == '/tarefa') {
+    else if (requisicao.method == 'POST' && requisicao.url == '/tarefas') {
         let body = ''
 
         requisicao.on('data', (chunk) => {
