@@ -5,12 +5,12 @@ import { URL } from 'node:url';
 const porta = 3000
 
 const tarefas = [
-    {id: 1, titulo: 'Lavar louça'},
-    {id: 2,titulo: 'Comprar uma RTX 5090'}
+    { id: 1, titulo: 'Lavar louça' },
+    { id: 2, titulo: 'Comprar uma RTX 5090' }
 ]
 
 const server = http.createServer((requisicao, resposta) => {
-    resposta.setHeader('Content-Type','application/json; charset=utf-8')
+    resposta.setHeader('Content-Type', 'application/json; charset=utf-8')
 
     const urlobj = new URL(requisicao.url, `http://${requisicao.headers.host}`);
 
@@ -18,14 +18,24 @@ const server = http.createServer((requisicao, resposta) => {
         resposta.statusCode = 200
         resposta.end(JSON.stringify(tarefas))
     } else if (requisicao.method == 'GET' && urlobj.pathname == '/tarefas/busca') {
-        
+
         const titulo = urlobj.searchParams.get('titulo');
 
         const resultadoFiltrado = tarefas.filter((tarefa) => {
-         tarefa.titulo.includes(titulo || '');
+            return tarefa.titulo.toLowerCase().includes(titulo || '');
         })
         resposta.statusCode == 200;
         resposta.end(JSON.stringify(resultadoFiltrado))
+    } else if ( requisicao.method == "DELETE" && urlobj.pathname == '/tarefas'){
+        const id = urlobj.searchParams.get('id');
+        const tarefa = tarefas.find((t) => {
+            t.id == id
+        });
+        const index = tarefas.indexOf(tarefa);
+
+        if (index > -1){
+            tarefas.splice(index, 1)
+        }
     }
     else if (requisicao.method == 'POST' && requisicao.url == '/tarefas') {
         let body = ''
@@ -35,12 +45,12 @@ const server = http.createServer((requisicao, resposta) => {
         })
 
         requisicao.on('end', () => {
-            try{
+            try {
                 const movaTarefa = JSON.parse(body)
 
                 if (!novaTarefa.titulo) {
                     resposta.statusCode = 400
-                    resposta.end(JSON.stringify({error: 'o campo "título" é obrigatório.'}));
+                    resposta.end(JSON.stringify({ error: 'o campo "título" é obrigatório.' }));
                 }
 
                 const tarefaCriada = {
@@ -53,14 +63,14 @@ const server = http.createServer((requisicao, resposta) => {
                 respostas.statusCode = 201
                 resposta.end(JSON.stringify(tarefaCriada))
 
-            } catch(error) {
+            } catch (error) {
                 resposta.statusCode = 400
-                resposta.end(JSON.stringify({error: 'Formato JSON inválido!'}))
+                resposta.end(JSON.stringify({ error: 'Formato JSON inválido!' }))
             }
         })
     } else {
         resposta.statusCode = 404
-        resposta.end(JSON.stringify({error: 'Pagina não encontrada.'}))
+        resposta.end(JSON.stringify({ error: 'Pagina não encontrada.' }))
     }
 });
 
