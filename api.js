@@ -12,17 +12,17 @@ const tarefas = [
 const server = http.createServer((requisicao, resposta) => {
     resposta.setHeader('Content-Type','application/json; charset=utf-8')
 
-    
+    const urlobj = new URL(requisicao.url, `http://${requisicao.headers.host}`);
 
     if (requisicao.method == 'GET' && requisicao.url == '/tarefas') {
         resposta.statusCode = 200
         resposta.end(JSON.stringify(tarefas))
     } else if (requisicao.method == 'GET' && urlobj.pathname == '/tarefas/busca') {
-        const urlobj = new URL(requisicao.url, `http://${requisicao.headers.host}`);
+        
         const titulo = urlobj.searchParams.get('titulo');
 
         const resultadoFiltrado = tarefas.filter((tarefa) => {
-            return tarefa.titulo.includes(titulo || '')
+         tarefa.titulo.includes(titulo || '');
         })
         resposta.statusCode == 200;
         resposta.end(JSON.stringify(resultadoFiltrado))
