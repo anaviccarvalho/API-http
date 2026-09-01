@@ -32,11 +32,13 @@ const server = http.createServer((requisicao, resposta) => {
             t.id == id
         });
         const index = tarefas.indexOf(tarefa);
+        const elementoDeletado = {}
 
         if (index > -1){
-            tarefas.splice(index, 1)
+            elementoDeletado = tarefas.splice(index, 1)
         }
-    }
+        resposta.end(JSON.stringify(elementoDeletado));
+    } 
     else if (requisicao.method == 'POST' && requisicao.url == '/tarefas') {
         let body = ''
 
